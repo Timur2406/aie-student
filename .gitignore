@@ -55,3 +55,8 @@ logs/
 *.tmp
 *.bak
 *.old
+
+# Своё
+.mypy_cache
+reports_example
+reports
