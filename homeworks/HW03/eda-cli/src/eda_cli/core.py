@@ -193,17 +193,13 @@ def compute_quality_flags(
     flags["too_many_missing"] = max_missing_share > min_missing_share
     flags["min_missing_share_threshold"] = min_missing_share
 
-    # Новые эвристики
     constant_columns = []
     high_cardinality_categoricals = []
-    high_zero_share_columns = []
 
     for col in summary.columns:
-        # 1. Проверка на постоянные колонки.
         if col.unique == 1 and col.non_null > 0:
             constant_columns.append(col.name)
 
-        # 2. Проверка на высокую кардинальность категориальных признаков
         if not col.is_numeric and col.unique > high_cardinality_threshold:
             high_cardinality_categoricals.append(
                 {
@@ -213,20 +209,16 @@ def compute_quality_flags(
                 }
             )
 
-        # 3. Проверка на много нулевых значений в числовых колонках.
-        if col.is_numeric and col.non_null > 0:
-            pass
-
     flags["has_constant_columns"] = len(constant_columns) > 0
     flags["constant_columns"] = constant_columns
     flags["has_high_cardinality_categoricals"] = len(high_cardinality_categoricals) > 0
     flags["high_cardinality_categoricals"] = high_cardinality_categoricals
     flags["high_cardinality_threshold"] = high_cardinality_threshold
-    flags["has_high_zero_share_columns"] = len(high_zero_share_columns) > 0
-    flags["high_zero_share_columns"] = high_zero_share_columns
+
+    flags["has_high_zero_share_columns"] = False  # По умолчанию
+    flags["high_zero_share_columns"] = []  # Будет заполнено в CLI
     flags["zero_share_threshold"] = zero_share_threshold
 
-    # Простейший «скор» качества с учетом новых факторов.
     score = 1.0
     score -= max_missing_share
 
@@ -238,8 +230,10 @@ def compute_quality_flags(
         score -= 0.15
     if flags["has_high_cardinality_categoricals"]:
         score -= 0.1 * min(1, len(high_cardinality_categoricals) / 5)
-    if flags["has_high_zero_share_columns"]:
-        score -= 0.1 * min(1, len(high_zero_share_columns) / 5)
+
+    if flags.get("has_high_zero_share_columns", False):
+        zero_penalty = 0.1 * min(1, len(flags.get("high_zero_share_columns", [])) / 5)
+        score -= zero_penalty
 
     score = max(0.0, min(1.0, score))
     flags["quality_score"] = score

@@ -102,21 +102,18 @@ def report(
 
     df = _load_csv(Path(path), sep=sep, encoding=encoding)
 
-    # 1. Обзор
     summary = summarize_dataset(df)
     summary_df = flatten_summary_for_print(summary)
     missing_df = missing_table(df)
     corr_df = correlation_matrix(df)
     top_cats = top_categories(df, top_k=top_k_categories)
 
-    # 2. Дополнительные проверки
     high_zero_columns = get_high_zero_share_columns(df, zero_share_threshold)
 
     id_check_result = {}
     if id_column:
         id_check_result = check_id_duplicates(df, id_column)
 
-    # 3. Качество в целом с новыми параметрами
     quality_flags = compute_quality_flags(
         summary,
         missing_df,
@@ -125,15 +122,18 @@ def report(
         zero_share_threshold=zero_share_threshold,
     )
 
-    # Добавляем результаты проверки нулевых значений
     quality_flags["has_high_zero_share_columns"] = len(high_zero_columns) > 0
     quality_flags["high_zero_share_columns"] = high_zero_columns
 
-    # Добавляем результаты проверки дубликатов ID
+    if quality_flags["has_high_zero_share_columns"]:
+        zero_penalty = 0.1 * min(1, len(high_zero_columns) / 5)
+        quality_flags["quality_score"] = max(
+            0.0, quality_flags["quality_score"] - zero_penalty
+        )
+
     if id_column:
         quality_flags.update(id_check_result)
 
-    # 4. Сохраняем табличные артефакты
     summary_df.to_csv(out_root / "summary.csv", index=False)
     if not missing_df.empty:
         missing_df.to_csv(out_root / "missing.csv", index=True)
@@ -141,7 +141,6 @@ def report(
         corr_df.to_csv(out_root / "correlation.csv", index=True)
     save_top_categories_tables(top_cats, out_root / "top_categories")
 
-    # 5. Markdown-отчёт с новыми параметрами
     md_path = out_root / "report.md"
     with md_path.open("w", encoding="utf-8") as f:
         f.write(f"# {title}\n\n")
@@ -161,7 +160,9 @@ def report(
         f.write(
             f"- Макс. доля пропусков по колонке: **{quality_flags['max_missing_share']:.2%}**\n"
         )
-        f.write(f"- Порог пропусков: **{min_missing_share:.0%}**\n")
+        f.write(
+            f"- Порог пропусков: **{quality_flags['min_missing_share_threshold']:.0%}**\n"
+        )
         f.write(
             f"- Есть колонки с пропусками > порога: **{quality_flags['too_many_missing']}**\n"
         )
@@ -172,15 +173,13 @@ def report(
 
         f.write(f"\n### Новые эвристики качества\n\n")
 
-        # Постоянные колонки
         if quality_flags["has_constant_columns"]:
-            f.write(f"- ❌ Есть постоянные колонки (все значения одинаковые):\n")
+            f.write(f"- Есть постоянные колонки (все значения одинаковые):\n")
             for col in quality_flags["constant_columns"]:
                 f.write(f"  - `{col}`\n")
         else:
             f.write(f"- Нет постоянных колонок\n")
 
-        # Высокая кардинальность
         if quality_flags["has_high_cardinality_categoricals"]:
             f.write(
                 f"\n- Есть категориальные признаки с высокой кардинальностью (> {quality_flags['high_cardinality_threshold']}):\n"
@@ -190,21 +189,19 @@ def report(
                     f"  - `{cat['column']}`: {cat['unique_count']} уникальных значений\n"
                 )
         else:
-            f.write(f"\n- Нет категориальных признаков с высокой кардинальностью\n")
+            f.write(f"\n- Нет категориальных признаков с высокой кардинальности\n")
 
-        # Нулевые значения
         if quality_flags["has_high_zero_share_columns"]:
             f.write(
                 f"\n- Есть числовые колонки с высокой долей нулей (> {zero_share_threshold:.0%}):\n"
             )
             for col_info in quality_flags["high_zero_share_columns"]:
                 f.write(
-                    f"  - `{col_info['column']}`: {col_info['zero_share']:.1%} нулей ({col_info['zero_count']} из {col_info['zero_count'] / col_info['zero_share']:.0f})\n"
+                    f"  - `{col_info['column']}`: {col_info['zero_share']:.1%} нулей ({col_info['zero_count']} из {int(col_info['zero_count'] / col_info['zero_share'])})\n"
                 )
         else:
             f.write(f"\n- Нет числовых колонок с высокой долей нулей\n")
 
-        # Дубликаты ID
         if id_column and quality_flags.get("has_id_duplicates", False):
             f.write(f"\n- Есть дубликаты в ID колонке `{id_column}`:\n")
             f.write(f"  - Уникальных значений: {quality_flags['unique_ids']}\n")
