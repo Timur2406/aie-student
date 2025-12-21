@@ -1,0 +1,220 @@
+```markdown
+# HW03 – eda_cli: мини-EDA для CSV
+
+Небольшое CLI-приложение для базового анализа CSV-файлов.
+Используется в рамках Семинара 03 курса «Инженерия ИИ».
+
+## Требования
+
+- Python 3.13+
+- [uv](https://docs.astral.sh/uv/) установлен в систему
+
+## Инициализация проекта
+
+В корне проекта (HW03):
+
+```bash
+uv sync
+```
+
+Эта команда:
+
+- создаст виртуальное окружение `.venv`;
+- установит зависимости из `pyproject.toml`;
+- установит сам проект `eda-cli` в окружение.
+
+## Запуск CLI
+
+### Краткий обзор
+
+```bash
+uv run eda-cli overview data/example.csv
+```
+
+Параметры:
+
+- `--sep` – разделитель (по умолчанию `,`);
+- `--encoding` – кодировка (по умолчанию `utf-8`).
+
+### Полный EDA-отчёт
+
+```bash
+uv run eda-cli report data/example.csv --out-dir reports
+```
+
+В результате в каталоге `reports/` появятся:
+
+- `report.md` – основной отчёт в Markdown;
+- `summary.csv` – таблица по колонкам;
+- `missing.csv` – пропуски по колонкам;
+- `correlation.csv` – корреляционная матрица (если есть числовые признаки);
+- `top_categories/*.csv` – top-k категорий по строковым признакам;
+- `hist_*.png` – гистограммы числовых колонок;
+- `missing_matrix.png` – визуализация пропусков;
+- `correlation_heatmap.png` – тепловая карта корреляций;
+- `problematic_columns.png` – график проблемных колонок (новая функция!).
+
+## Расширенные возможности (HW03)
+
+### Новые параметры команды `report`
+
+Для тонкой настройки анализа добавлены дополнительные параметры:
+
+```bash
+uv run eda-cli report data/example.csv \
+  --out-dir reports \
+  --title "Мой анализ" \
+  --top-k-categories 5 \
+  --min-missing-share 0.5 \
+  --high-cardinality-threshold 100 \
+  --zero-share-threshold 0.8 \
+  --id-column user_id \
+  --max-hist-columns 6
+```
+
+**Новые параметры:**
+- `--title` – заголовок отчёта в Markdown
+- `--top-k-categories` – количество топ-значений для категориальных признаков
+- `--min-missing-share` – порог доли пропусков для выделения проблемных колонок
+- `--high-cardinality-threshold` – порог уникальных значений для категориальных признаков
+- `--zero-share-threshold` – порог доли нулевых значений для числовых колонок
+- `--id-column` – идентификационная колонка для проверки уникальности
+
+### Продвинутые эвристики качества данных
+
+Реализованы новые эвристики для автоматической оценки качества данных:
+
+1. **Постоянные колонки** – обнаружение колонок, где все значения одинаковые
+2. **Высокая кардинальность** – выявление категориальных признаков с чрезмерно большим числом уникальных значений
+3. **Нулевые значения** – анализ числовых колонок с высокой долей нулевых значений
+4. **Дубликаты ID** – проверка уникальности идентификационных колонок
+
+Все эвристики влияют на интегральный показатель качества (`quality_score`) и детально отображаются в отчёте.
+
+### Улучшенные отчёты
+
+Генерируемый Markdown-отчёт теперь включает:
+- Раздел с использованными параметрами анализа
+- График проблемных колонок (`problematic_columns.png`)
+- Расширенную информацию о категориальных признаках
+
+## Пример использования
+
+```bash
+# Полный анализ с настройкой всех параметров
+uv run eda-cli report data/example.csv \
+  --out-dir detailed_report \
+  --title "Анализ пользовательских данных" \
+  --top-k-categories 8 \
+  --min-missing-share 0.2 \
+  --high-cardinality-threshold 50 \
+  --zero-share-threshold 0.7 \
+  --id-column user_id
+
+# Проверка результатов
+ls detailed_report/
+```
+
+## Тесты
+
+```bash
+# Все тесты
+uv run pytest -q
+
+# Тесты новых эвристик
+uv run pytest tests/ -k "heuristic" -v
+
+# Конкретный тест
+uv run pytest tests/test_core.py::test_constant_columns_heuristic -v
+```
+
+Добавлены новые тесты для проверки реализованных эвристик качества данных.
+
+## Структура проекта
+
+```
+eda-cli/
+├── pyproject.toml
+├── README.md
+├── src/
+│   └── eda_cli/
+│       ├── __init__.py
+│       ├── cli.py          # CLI интерфейс
+│       ├── core.py         # Основная логика + новые эвристики
+│       └── viz.py          # Визуализации + новый график
+├── tests/
+│   ├── test_core.py        # Тесты (включая новые)
+│   └── __init__.py
+└── data/
+    └── example.csv
+```
+
+## Для разработчиков
+
+### Установка в режиме разработки
+
+```bash
+uv pip install -e .
+```
+
+### Проверка кода
+
+```bash
+uv run ruff check src/ tests/
+uv run pytest tests/ -v
+```
+
+## Примечания
+
+- Все новые функции полностью интегрированы с существующей архитектурой.
+- Обратная совместимость сохранена.
+- Отчёты стали более информативными и настраиваемыми.
+
+Проект готов к использованию для быстрого анализа CSV-файлов с продвинутыми возможностями оценки качества данных.
+```
+
+# Дополнительный эндпоинт: POST /quality-flags-from-csv
+
+## Описание
+Возвращает полный набор флагов качества из CSV-файла, включая все эвристики из HW03.
+
+## Параметры
+- **file** (обязательный): CSV-файл для анализа (multipart/form-data)
+- **id_column** (опционально, по умолчанию "user_id"): имя колонки для проверки дубликатов
+- **zero_share_threshold** (опционально, по умолчанию 0.8): порог для определения "много нулевых значений" (0.0-1.0)
+- **high_cardinality_threshold** (опционально, по умолчанию 100): порог для высокой кардинальности категориальных признаков
+
+## Ответ
+```json
+{
+  "flags": {
+    "too_few_rows": false,
+    "too_many_columns": false,
+    "too_many_missing": true,
+    "has_constant_columns": false,
+    "has_high_cardinality_categoricals": true,
+    "has_high_zero_share_columns": true,
+    "has_id_duplicates": false
+  },
+  "dataset_info": {
+    "n_rows": 1000,
+    "n_cols": 20,
+    "file_name": "data.csv"
+  },
+  "parameters_used": {
+    "id_column": "user_id",
+    "zero_share_threshold": 0.8,
+    "high_cardinality_threshold": 100
+  },
+  "quality_score": 0.85,
+  "latency_ms": 123.45
+}
+
+## Пример использования с curl
+
+```bash
+curl -X POST "http://localhost:8000/quality-flags-from-csv" \
+  -F "file=@data.csv" \
+  -F "id_column=customer_id" \
+  -F "zero_share_threshold=0.7"
+```
