@@ -218,3 +218,20 @@ curl -X POST "http://localhost:8000/quality-flags-from-csv" \
   -F "id_column=customer_id" \
   -F "zero_share_threshold=0.7"
 ```
+
+```markdown
+## Запуск FastAPI сервера
+
+Для запуска HTTP-сервиса используйте:
+
+```bash
+uv run uvicorn eda_cli.api:app --host 0.0.0.0 --port 8000 --reload
+```
+
+Параметры:
+- `--host 0.0.0.0` – слушать все интерфейсы
+- `--port 8000` – порт (можно изменить)
+- `--reload` – автоматическая перезагрузка при изменениях кода
+
+После запуска сервис будет доступен по адресу: `http://localhost:8000`
+```
