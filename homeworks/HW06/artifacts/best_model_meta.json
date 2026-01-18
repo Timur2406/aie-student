@@ -1,0 +1,10 @@
+{
+  "best_model_name": "GradientBoosting",
+  "test_metrics": {
+    "accuracy": 0.927,
+    "f1": 0.8824476650563607,
+    "roc_auc": 0.9682260931389975
+  },
+  "cv_score": 0.965832401811816,
+  "timestamp": "2026-01-18T18:40:24.915131"
+}

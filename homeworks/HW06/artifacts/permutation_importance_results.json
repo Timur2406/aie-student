@@ -1,0 +1,178 @@
+{
+  "best_model": "GradientBoosting",
+  "permutation_importance": [
+    {
+      "feature": "num18",
+      "importance_mean": 0.07775953481285867,
+      "importance_std": 0.003964629325184369
+    },
+    {
+      "feature": "num19",
+      "importance_mean": 0.07632959219948204,
+      "importance_std": 0.0033927908448170424
+    },
+    {
+      "feature": "num07",
+      "importance_mean": 0.03229516022548372,
+      "importance_std": 0.0022482913892793153
+    },
+    {
+      "feature": "num04",
+      "importance_mean": 0.017046010867909224,
+      "importance_std": 0.0017751601870535942
+    },
+    {
+      "feature": "num24",
+      "importance_mean": 0.013318978213397004,
+      "importance_std": 0.0009398234990352309
+    },
+    {
+      "feature": "num20",
+      "importance_mean": 0.012814382205068319,
+      "importance_std": 0.0014557977438679974
+    },
+    {
+      "feature": "num01",
+      "importance_mean": 0.008420191965872782,
+      "importance_std": 0.0008487426813703271
+    },
+    {
+      "feature": "num22",
+      "importance_mean": 0.008058046823421894,
+      "importance_std": 0.0010694235495336969
+    },
+    {
+      "feature": "num14",
+      "importance_mean": 0.005263724544208004,
+      "importance_std": 0.0008843196398614203
+    },
+    {
+      "feature": "num21",
+      "importance_mean": 0.004933269006144969,
+      "importance_std": 0.0009273153698709882
+    },
+    {
+      "feature": "num17",
+      "importance_mean": 0.004824437560306716,
+      "importance_std": 0.0008896029384576255
+    },
+    {
+      "feature": "num16",
+      "importance_mean": 0.004607130160987271,
+      "importance_std": 0.0005231178713310128
+    },
+    {
+      "feature": "num08",
+      "importance_mean": 0.0029464222233507864,
+      "importance_std": 0.0007368612740586334
+    },
+    {
+      "feature": "num06",
+      "importance_mean": 0.0027270834391346366,
+      "importance_std": 0.0004926245778902584
+    },
+    {
+      "feature": "num13",
+      "importance_mean": 0.002665024630541879,
+      "importance_std": 0.0006371127135661973
+    },
+    {
+      "feature": "num02",
+      "importance_mean": 0.0020635315626428507,
+      "importance_std": 0.00045981626910386353
+    },
+    {
+      "feature": "num09",
+      "importance_mean": 0.00024264892590525333,
+      "importance_std": 0.00016896186599347173
+    },
+    {
+      "feature": "num10",
+      "importance_mean": 0.00015661977553199646,
+      "importance_std": 7.473564146277672e-05
+    },
+    {
+      "feature": "num05",
+      "importance_mean": 0.00012589507897009522,
+      "importance_std": 0.00012027476636952896
+    },
+    {
+      "feature": "num23",
+      "importance_mean": 9.105682799251947e-05,
+      "importance_std": 0.00016527988587692924
+    },
+    {
+      "feature": "num15",
+      "importance_mean": 5.352699202685329e-05,
+      "importance_std": 0.00011183627152780713
+    },
+    {
+      "feature": "cat_contract",
+      "importance_mean": 5.032756081458922e-05,
+      "importance_std": 3.1463071707752014e-05
+    },
+    {
+      "feature": "tenure_months",
+      "importance_mean": 2.843938855316974e-05,
+      "importance_std": 3.504212546854873e-05
+    },
+    {
+      "feature": "num03",
+      "importance_mean": 1.6251079173279502e-05,
+      "importance_std": 0.00010570987196460603
+    },
+    {
+      "feature": "cat_payment",
+      "importance_mean": -3.047077345108562e-07,
+      "importance_std": 4.654487527448355e-07
+    },
+    {
+      "feature": "num11",
+      "importance_mean": -2.437661875983599e-05,
+      "importance_std": 0.00015707118061338314
+    },
+    {
+      "feature": "cat_region",
+      "importance_mean": -2.6255649789186374e-05,
+      "importance_std": 3.512082520502109e-05
+    },
+    {
+      "feature": "num12",
+      "importance_mean": -5.789446955460909e-05,
+      "importance_std": 8.453100019815612e-05
+    }
+  ],
+  "top_features": [
+    {
+      "feature": "num18",
+      "importance_mean": 0.07775953481285867,
+      "importance_std": 0.003964629325184369
+    },
+    {
+      "feature": "num19",
+      "importance_mean": 0.07632959219948204,
+      "importance_std": 0.0033927908448170424
+    },
+    {
+      "feature": "num07",
+      "importance_mean": 0.03229516022548372,
+      "importance_std": 0.0022482913892793153
+    },
+    {
+      "feature": "num04",
+      "importance_mean": 0.017046010867909224,
+      "importance_std": 0.0017751601870535942
+    },
+    {
+      "feature": "num24",
+      "importance_mean": 0.013318978213397004,
+      "importance_std": 0.0009398234990352309
+    }
+  ],
+  "interpretation": {
+    "numeric_in_top": 5,
+    "categorical_in_top": 0,
+    "has_tenure": false,
+    "suspicious_features": []
+  }
+}
