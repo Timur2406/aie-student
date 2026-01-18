@@ -1,0 +1,25 @@
+{
+    "dataset-01": {
+        "method": "KMeans",
+        "params": {
+            "n_clusters": 2
+        },
+        "criterion": "max silhouette_score"
+    },
+    "dataset-02": {
+        "method": "DBSCAN",
+        "params": {
+            "eps": 0.8,
+            "min_samples": 10
+        },
+        "criterion": "max silhouette_score with noise_ratio < 0.3"
+    },
+    "dataset-03": {
+        "method": "DBSCAN",
+        "params": {
+            "eps": 0.8,
+            "min_samples": 3
+        },
+        "criterion": "max silhouette_score with noise_ratio < 0.3"
+    }
+}
