@@ -60,3 +60,5 @@ logs/
 .mypy_cache
 reports_example
 reports
+
+homeworks/HW08-09/data

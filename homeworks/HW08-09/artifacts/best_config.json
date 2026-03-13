@@ -1,0 +1,29 @@
+{
+    "experiment_id": "E4",
+    "dataset": "CIFAR10",
+    "seed": 42,
+    "model_architecture": {
+        "hidden_sizes": [
+            1024,
+            512,
+            256
+        ],
+        "dropout_rate": 0.0,
+        "use_batchnorm": true,
+        "activation": "relu",
+        "total_parameters": 3809034
+    },
+    "training_params": {
+        "optimizer": "Adam",
+        "lr": 0.001,
+        "batch_size": 64,
+        "early_stopping_patience": 7,
+        "max_epochs": 40,
+        "actual_epochs_trained": 17
+    },
+    "final_test_metrics": {
+        "accuracy": 0.5387,
+        "loss": 1.98194577293396
+    },
+    "best_val_accuracy": 0.5607
+}
