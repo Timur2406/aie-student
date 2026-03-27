@@ -11,8 +11,8 @@
 
 ## 2. Среда и воспроизводимость
 
-- Python:
-- torch / torchvision:
+- Python: 3.13
+- torch / torchvision: 2.10.0+cpu / 0.25.0+cpu
 - Устройство (CPU/GPU): cpu
 - Seed: 42
 - Как запустить: открыть `HW10-11.ipynb` и выполнить Run All.

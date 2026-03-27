@@ -1,0 +1,16 @@
+{
+  "dataset": "S12-hw-dataset.csv",
+  "seed": 42,
+  "window_size": 24,
+  "horizon": 1,
+  "hidden_size": 32,
+  "num_layers": 1,
+  "batch_size": 64,
+  "learning_rate": 0.001,
+  "max_epochs": 30,
+  "optimizer": "Adam",
+  "scaler": "StandardScaler(train target only)",
+  "best_val_mae": 6.05015754699707,
+  "best_val_rmse": 7.8044167167115015,
+  "best_val_mape": 4.053774833679199
+}
