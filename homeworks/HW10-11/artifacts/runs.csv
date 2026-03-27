@@ -1,0 +1,7 @@
+experiment_id,task,dataset,seed,model_summary,optimizer,lr,epochs_trained,best_val_accuracy,test_accuracy,precision,recall,mean_iou,notes
+C1,classification,CIFAR100,42,SimpleCNN base,Adam,0.001,8,0.4033,,,,,simple-cnn-base; no augmentations
+C2,classification,CIFAR100,42,SimpleCNN + augmentations,Adam,0.001,8,0.3098,,,,,simple-cnn-aug; crop+flip+color jitter
+C3,classification,CIFAR100,42,"ResNet18 pretrained, head-only",Adam,0.001,5,0.5415,,,,,resnet18-head-only; pretrained backbone frozen
+C4,classification,CIFAR100,42,"ResNet18 pretrained, layer4+fc finetune",Adam,0.0003,5,0.6655,0.6658,,,,resnet18-finetune; layer4+fc trainable
+V1,segmentation,OxfordIIITPet,42,DeepLabV3_ResNet50 pretrained,,,0,,,0.9427623400668445,0.8260042542894385,0.7923579542618954,threshold=0.5; pet foreground from cat/dog logits
+V2,segmentation,OxfordIIITPet,42,DeepLabV3_ResNet50 pretrained,,,0,,,0.9521928159271159,0.7812229318948493,0.75624670158098,threshold=0.6; opening-closing + remove_small_components(120)
