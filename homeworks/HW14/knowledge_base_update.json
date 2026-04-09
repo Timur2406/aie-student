@@ -1,0 +1,17 @@
+[
+  {
+    "source": "doc_overlap_tuning",
+    "title": "Choosing overlap for chunking",
+    "text": "Overlap controls how much neighboring chunks share text. With zero overlap, a definition at the end of one chunk and its explanation at the beginning of the next chunk become separated. A moderate overlap, for example 40 to 80 characters in a small educational corpus, helps preserve local continuity without duplicating too much text.\n\nOverlap is especially helpful for retrieval questions that refer to a condition, contrast or list item placed near a chunk boundary. The cost is that the index contains slightly more chunks and some results become redundant. In practice the overlap value should be recorded together with chunk size, because the two parameters interact."
+  },
+  {
+    "source": "doc_hybrid_search",
+    "title": "Hybrid retrieval with lexical and semantic signals",
+    "text": "Hybrid retrieval combines lexical matching and vector similarity. The lexical part rewards exact term overlap, while the vector part captures broader semantic relatedness. On corpora with specialized terminology, hybrid search can improve difficult queries that either rely on exact jargon or use paraphrases.\n\nA lightweight educational notebook does not need to implement a full hybrid engine, but the concept is useful in error analysis. If TF-IDF misses a paraphrased query or a dense model misses a rare keyword, a hybrid strategy can often recover the relevant source."
+  },
+  {
+    "source": "doc_rag_failure_modes",
+    "title": "Common failure modes in mini-RAG",
+    "text": "Mini RAG systems fail when retrieval brings weak context, when the context window contains too many partially relevant chunks or when the answer builder extracts the wrong sentence. Another common issue is knowledge base incompleteness: the system sounds hesitant because the required fact was never indexed.\n\nA practical debugging routine is to inspect the top k chunks, check whether the expected source appears, and then verify which sentence the answer builder selected. This quickly shows whether the main bottleneck is retrieval quality, chunk design or the answer synthesis rule."
+  }
+]

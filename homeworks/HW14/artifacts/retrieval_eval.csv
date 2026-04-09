@@ -1,0 +1,11 @@
+query,expected_source,retrieved_sources,hit_at_k,recall_at_k,rank_of_first_relevant,mrr_component
+Why should the test split be used only once?,doc_train_val_test | doc_data_leakage,doc_train_val_test | doc_data_leakage,1,1.0,1,1.0
+Why is random shuffling wrong for time series evaluation?,doc_train_val_test | doc_time_series_split,doc_train_val_test | doc_time_series_split,1,1.0,1,1.0
+What does overlap protect against in chunking?,doc_chunking_strategies,doc_chunking_strategies | doc_prompt_answering | doc_embeddings_basics,1,1.0,1,1.0
+How can TF-IDF vectors be used together with FAISS?,doc_tfidf_vectorizer | doc_faiss_index,doc_tfidf_vectorizer,1,0.5,1,1.0
+What is hit@k and when can it match recall@k?,doc_retrieval_metrics,doc_retrieval_metrics,1,1.0,1,1.0
+Why should a mini RAG return sources with the answer?,doc_rag_pipeline | doc_prompt_answering,doc_rag_pipeline | doc_chunking_strategies,1,0.5,1,1.0
+What kinds of mistakes should error analysis separate?,doc_error_analysis,doc_error_analysis,1,1.0,1,1.0
+Why is experiment tracking useful in retrieval experiments?,doc_model_selection,doc_model_selection,1,1.0,1,1.0
+Which similarity setup is common with IndexFlatIP?,doc_faiss_index | doc_embeddings_basics,doc_faiss_index | doc_tfidf_vectorizer,1,0.5,1,1.0
+What are the limitations of template based answering?,doc_prompt_answering,doc_prompt_answering | doc_data_leakage | doc_embeddings_basics,1,1.0,1,1.0

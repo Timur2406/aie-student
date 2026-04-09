@@ -1,0 +1,62 @@
+[
+  {
+    "source": "doc_train_val_test",
+    "title": "Train, validation and test splits",
+    "text": "A supervised learning workflow should separate data into train, validation and test splits. The training split is used to fit model parameters. The validation split is used to compare model variants, tune hyperparameters and choose the final configuration. The test split is kept untouched until the end and is used exactly once for the final estimate. Mixing these roles leads to optimistic metrics and fragile conclusions.\n\nWhen the dataset is large enough, a common pattern is 70 percent for training, 15 percent for validation and 15 percent for test. For small datasets, cross validation can replace a fixed validation split, but the final test set should still remain isolated. Random seeds matter because they make the split reproducible and let us compare experiments fairly.\n\nFor time series, random shuffling is usually wrong because future observations leak into the past. In that case, temporal splitting is safer: earlier timestamps go to training, later timestamps go to validation and the latest segment becomes the test window."
+  },
+  {
+    "source": "doc_data_leakage",
+    "title": "Data leakage in machine learning",
+    "text": "Data leakage happens when information from outside the training procedure sneaks into model building and artificially boosts quality metrics. Leakage can appear through preprocessing fitted on the whole dataset, target-derived features, duplicate examples across splits or manual tuning on the test set. The model then performs well in evaluation but degrades in production.\n\nA reliable defense is to build transformations inside a pipeline and fit them only on the training part. Every split should be created before normalization, target encoding or feature selection. Another useful habit is to keep an experiment log that records the split seed, preprocessing choices and metric definitions.\n\nLeakage is especially dangerous in retrieval systems when evaluation queries are too similar to the indexed chunks or when updated knowledge accidentally contains the answer template. Careful split design and transparent source tracking help reduce these mistakes."
+  },
+  {
+    "source": "doc_embeddings_basics",
+    "title": "Embeddings for semantic retrieval",
+    "text": "Embeddings convert text into dense or sparse vectors that place semantically related items near each other. A chunk about model evaluation and a query about validation metrics should have similar vector representations even if they do not share every surface word. Dense neural embeddings are common in production systems, but classical vectorization methods can still be useful for educational experiments and small corpora.\n\nThe key design choice is what unit we embed: full documents, paragraphs or shorter chunks. If the chunk is too long, unrelated topics get mixed together and retrieval becomes noisy. If the chunk is too short, the system loses context and may return fragments that are precise but incomplete.\n\nAfter vectorization, similarity search compares the query vector with chunk vectors and returns the nearest neighbors. Cosine similarity is a standard choice because it focuses on vector direction rather than raw magnitude."
+  },
+  {
+    "source": "doc_faiss_index",
+    "title": "FAISS and similarity search",
+    "text": "FAISS is a library for efficient similarity search over vector collections. The simplest index for small educational experiments is IndexFlatIP or IndexFlatL2. IndexFlatIP works well for cosine-style search when vectors are normalized to unit length before indexing and querying. This setup is easy to reason about and gives exact nearest neighbors.\n\nIn a retrieval pipeline, we first build embeddings for all chunks, normalize them and add them to the index. At query time, we transform the incoming question with the same vectorizer, normalize the query embedding and ask the index for the top k nearest chunks. The index returns scores and integer ids, which we map back to chunk text and source metadata.\n\nFAISS becomes more valuable when the corpus grows, because approximate indexes can trade a small amount of accuracy for much faster search. For homework scale data, exact flat indexes are usually enough."
+  },
+  {
+    "source": "doc_chunking_strategies",
+    "title": "Chunking strategies for knowledge bases",
+    "text": "Chunking is the process of splitting documents into smaller retrieval units. A practical baseline is fixed-size character windows with overlap. Overlap matters because a useful fact often sits near a chunk boundary; without overlap, the answer can be cut in half and retrieval quality drops.\n\nChunk size is a tradeoff. Larger chunks preserve context and are easier to understand once retrieved, but they may contain several loosely related ideas. Smaller chunks are more specific and can improve precision, yet they sometimes remove the sentence that explains a term or gives an important condition. Because of this tradeoff, chunk size is a natural parameter for a small retrieval experiment.\n\nIt is helpful to store metadata for each chunk: source document id, chunk id and title. This makes evaluation easier and lets a mini RAG system return human-readable sources."
+  },
+  {
+    "source": "doc_retrieval_metrics",
+    "title": "Hit@k, recall@k and MRR",
+    "text": "Retrieval quality can be measured in several complementary ways. Hit at k checks whether at least one relevant item appears in the top k results. It is simple and useful when the goal is to surface one good chunk that allows the answering stage to continue. Recall at k measures how many relevant items were found among all relevant items for the query.\n\nIf each query has only one relevant source, hit at k and recall at k become numerically identical. To make recall more informative, some evaluation sets define two or more acceptable sources. Mean reciprocal rank, or MRR, rewards systems that place a relevant result very high in the ranking: the first relevant result at rank one contributes one point, rank two contributes one half, and so on.\n\nGood evaluation tables usually record the query, expected source ids, retrieved source ids, hit at k and the rank of the first relevant item."
+  },
+  {
+    "source": "doc_tfidf_vectorizer",
+    "title": "TF-IDF as a lightweight vectorizer",
+    "text": "TF-IDF stands for term frequency inverse document frequency. It weights terms by how important they are in a document relative to the whole corpus. Common words receive smaller weights, while informative terms receive larger weights. Even though TF-IDF is not a neural embedding model, it often performs surprisingly well on focused corpora with consistent terminology.\n\nA simple retrieval baseline can build chunk vectors with TfidfVectorizer, convert the matrix to float32 and normalize each row. After that, the vectors can be indexed in FAISS with inner product similarity. This approach is cheap, deterministic and easy to debug, which makes it attractive for a teaching notebook.\n\nThe main limitation is lexical sensitivity. If the query uses very different vocabulary from the relevant chunk, TF-IDF may miss it. That weakness becomes visible in paraphrased questions and is a good subject for short error analysis."
+  },
+  {
+    "source": "doc_rag_pipeline",
+    "title": "Mini-RAG pipeline design",
+    "text": "A retrieval augmented generation pipeline usually contains four steps: chunk the documents, embed and index them, retrieve top k chunks for a user query and then build an answer from the retrieved context. In a classroom version, the generation step can be very lightweight: it may simply select the most relevant sentences from the retrieved chunks and return them with source references.\n\nEven a simple mini RAG should expose its sources. This makes the answer auditable and helps us understand whether a failure comes from retrieval, context assembly or answer generation. Source tracking is also useful after updating the knowledge base, because it shows whether newly added documents actually enter the answer path.\n\nA small top k such as three or four is often enough for educational examples. Too many chunks can flood the generator with marginally relevant context and reduce answer quality."
+  },
+  {
+    "source": "doc_error_analysis",
+    "title": "Error analysis for retrieval and RAG",
+    "text": "When retrieval makes mistakes, the failure often belongs to one of a few patterns. The query can be underspecified, the vocabulary can differ from the document wording, the answer can be split across chunks or the knowledge base may simply not contain the needed fact. Looking at retrieved sources and their ranks helps separate these cases.\n\nError analysis becomes even more important in a RAG pipeline. Sometimes retrieval is correct but the answer builder picks an unhelpful sentence. In other cases retrieval is already weak, so no answering strategy can fully recover. A good report should mention a few borderline examples instead of only perfect successes.\n\nShort qualitative notes are enough for homework: identify whether the issue comes from retrieval, chunking, context assembly or missing documents, and propose one realistic improvement."
+  },
+  {
+    "source": "doc_model_selection",
+    "title": "Model selection and experiment tracking",
+    "text": "Machine learning projects often compare several model or retrieval variants. To make that comparison fair, experiments should use the same evaluation protocol, the same random seed when applicable and a clear selection rule. For classification tasks the selection rule may be validation accuracy; for retrieval tasks it can be hit at k or recall at k on a fixed set of control queries.\n\nExperiment tracking does not require heavy infrastructure in a homework setting. A simple CSV file with configuration values, metrics and comments already makes the workflow much easier to audit. The same idea applies to retrieval experiments: recording chunk size, overlap, top k and aggregate metrics allows us to justify why one setup was chosen as the main pipeline.\n\nWithout tracking, it is easy to overstate improvements or forget which configuration produced a good result."
+  },
+  {
+    "source": "doc_prompt_answering",
+    "title": "Answer generation from retrieved context",
+    "text": "The generation stage of a mini RAG does not always need a large language model. If the goal is interpretability and reproducibility, a template-based answer can work well. One practical approach is to rank sentences inside the retrieved context by overlap with query keywords and return the best two or three sentences as a synthesized answer.\n\nThis approach has obvious limits. It cannot merge scattered evidence as flexibly as a strong generative model, and it may repeat document phrasing instead of producing a polished explanation. Still, it is sufficient to demonstrate the dependency between retrieval quality and final answers.\n\nReturning sources next to the answer is non-negotiable in this setup. The user should see which chunks supported the output and inspect them directly if needed."
+  },
+  {
+    "source": "doc_time_series_split",
+    "title": "Temporal evaluation and forecasting",
+    "text": "Forecasting tasks require chronological evaluation. The model should train on earlier observations, validate on a later segment and test on the most recent horizon. Random shuffling hides the real forecasting difficulty because it lets the model observe patterns from the future during training.\n\nA retrieval system over time-sensitive documents faces a similar issue. If the index contains future information during evaluation, the measured quality can look unrealistically good. This is another example of why careful split design matters even outside classical prediction tasks.\n\nWhen reporting time-based experiments, it is helpful to state the exact split boundaries and to explain why they prevent leakage."
+  }
+]

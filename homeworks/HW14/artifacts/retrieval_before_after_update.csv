@@ -1,0 +1,5 @@
+query,before_retrieved_sources,after_retrieved_sources,changed
+Why can overlap help when a fact sits near a chunk boundary?,doc_chunking_strategies | doc_time_series_split | doc_data_leakage,doc_chunking_strategies | doc_overlap_tuning,True
+What does hybrid retrieval combine?,doc_embeddings_basics | doc_model_selection | doc_prompt_answering,doc_hybrid_search,True
+What failure modes are common in mini RAG systems?,doc_embeddings_basics | doc_rag_pipeline,doc_rag_failure_modes,True
+How should we debug whether retrieval or answer generation caused an error?,doc_rag_pipeline | doc_prompt_answering,doc_rag_pipeline | doc_prompt_answering,False

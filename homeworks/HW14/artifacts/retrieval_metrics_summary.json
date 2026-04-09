@@ -1,0 +1,7 @@
+{
+  "top_k": 3,
+  "hit_at_k": 1.0,
+  "recall_at_k": 0.85,
+  "mrr_at_k": 1.0,
+  "num_queries": 10
+}
